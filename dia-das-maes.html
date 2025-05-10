@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feliz Dia das Mães</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fff0f5;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      color: #8b005d;
+    }
+
+    header {
+      background: #ffc0cb;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 0;
+    }
+
+    p.message {
+      font-size: 1.2rem;
+      margin: 20px;
+    }
+
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      padding: 20px;
+    }
+
+    .gallery img {
+      width: 100%;
+      max-width: 250px;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      transition: transform 0.3s, opacity 0.5s ease-in;
+      opacity: 0;
+    }
+
+    .gallery img.loaded {
+      opacity: 1;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
+
+    footer {
+      margin-top: 30px;
+      padding: 15px;
+      background: #ffc0cb;
+      font-size: 1rem;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      display: none;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(255,255,255,0.8);
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 aria-label="Feliz Dia das Mães com amor da Família Carvalho">Feliz Dia das Mães! 💖</h1>
+  </header>
+
+  <p class="message">Uma homenagem cheia de amor para Maria Luisa Carvalho (<b>DONA PRETA</b>). Nossa eterna MÃE, obrigado por tudo! 💐</p>
+
+  <div class="gallery">
+    <!-- Substitua os caminhos abaixo pelas fotos desejadas -->
+    <img src="fotos/mae1.jpg" alt="Mãe 1">
+    <img src="fotos/mae2.jpg" alt="Mãe 2">
+    <img src="fotos/mae3.jpg" alt="Mãe 3">
+    <img src="fotos/mae4.jpg" alt="Mãe 4">
+    <img src="fotos/mae5.jpg" alt="Mãe 5">
+    <img src="fotos/mae6.jpg" alt="Mãe 6">
+    <img src="fotos/mae7.jpg" alt="Mãe 7">
+    <img src="fotos/mae8.jpg" alt="Mãe 8">
+    <img src="fotos/mae9.jpg" alt="Mãe 9">
+    <img src="fotos/mae10.jpg" alt="Mãe 10">
+    <img src="fotos/mae11.jpg" alt="Mãe 11">
+    <img src="fotos/mae12.jpg" alt="Mãe 12">
+    <img src="fotos/mae13.jpg" alt="Mãe 13">
+    <img src="fotos/mae14.jpg" alt="Mãe 14">
+    <img src="fotos/mae15.jpg" alt="Mãe 15">
+    <img src="fotos/mae16.jpg" alt="Mãe 16">
+    <img src="fotos/mae17.jpg" alt="Mãe 17">
+    <img src="fotos/mae18.jpg" alt="Mãe 18">
+    <img src="fotos/mae19.jpg" alt="Mãe 19">
+    <img src="fotos/mae20.jpg" alt="Mãe 20">
+    <img src="fotos/mae21.jpg" alt="Mãe 21">
+    <img src="fotos/mae22.jpg" alt="Mãe 22">
+    <img src="fotos/mae23.jpg" alt="Mãe 23">
+    <img src="fotos/mae24.jpg" alt="Mãe 24">
+    <img src="fotos/mae25.jpg" alt="Mãe 25">
+    <img src="fotos/mae26.jpg" alt="Mãe 26">
+    <img src="fotos/mae27.jpg" alt="Mãe 27">
+    <img src="fotos/mae28.jpg" alt="Mãe 28">
+    <img src="fotos/mae29.jpg" alt="Mãe 29">
+    <img src="fotos/mae30.jpg" alt="Mãe 30">
+    <img src="fotos/mae31.jpg" alt="Mãe 31">
+    <img src="fotos/mae32.jpg" alt="Mãe 32">
+  </div>
+
+  <footer>
+    &copy; 2025 - Paulo Carvalho - Todos os Direitos Reservados. ❤️ Com amor <b>FAMÍLIA CARVALHO</b>.
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <img src="" alt="Imagem em destaque" id="lightbox-img">
+  </div>
+
+  <!-- Música de fundo -->
+  <audio autoplay loop>
+    <source src="musica/feliz-dia-maes.mp3" type="audio/mp3">
+    Seu navegador não suporta áudio.
+  </audio>
+
+  <!-- Scripts -->
+  <script>
+    // Efeito de fade-in nas imagens
+    document.querySelectorAll('.gallery img').forEach(img => {
+      img.addEventListener('load', () => {
+        img.classList.add('loaded');
+      });
+
+      // Lightbox ao clicar
+      img.addEventListener('click', () => {
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        lightboxImg.src = img.src;
+        lightbox.style.display = 'flex';
+
+        // Fecha automaticamente após 5 segundos
+        setTimeout(() => {
+          lightbox.style.display = 'none';
+          lightboxImg.src = '';
+        }, 5000);
+      });
+    });
+  </script>
+</body>
+</html>
