@@ -5,9 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Feliz Dia das Mães</title>
   <style>
+    :root {
+      --bg-color: #fff0f5;
+      --text-color: #8b005d;
+      --header-bg: #ffc0cb;
+      --footer-bg: #ffc0cb;
+      --btn-bg: #ff69b4;
+      --btn-hover: #e754a0;
+    }
+
+    body.dark-mode {
+      --bg-color: #1e1e1e;
+      --text-color: #f8d0e3;
+      --header-bg: #2c2c2c;
+      --footer-bg: #2c2c2c;
+      --btn-bg: #444;
+      --btn-hover: #666;
+    }
+
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #fff0f5;
+      background: var(--bg-color);
       margin: 0;
       padding: 0;
       text-align: center;
@@ -15,7 +33,7 @@
     }
 
     header {
-      background: #ffc0cb;
+      background: var(--header-bg);
       padding: 20px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
@@ -28,6 +46,29 @@
     p.message {
       font-size: 1.2rem;
       margin: 20px;
+    }
+
+    .controls {
+      margin: 10px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .controls button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background: var(--btn-bg);
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .controls button:hover {
+      background: #555;
     }
 
     .gallery {
@@ -87,6 +128,38 @@
       animation: fadeIn 0.5s ease;
     }
 
+    #close-lightbox {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 40px;
+      color: white;
+      cursor: pointer;
+      z-index: 10000;
+    }
+
+    .back-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #444;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(255,255,255,0.1);
+      display: none;
+      transition: background 0.3s;
+      z-index: 1000;
+    }
+
+    .back-to-top:hover {
+      background: #666;
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -99,6 +172,11 @@
   </header>
 
   <p class="message">Uma homenagem cheia de amor para Maria Luisa Carvalho (<b>DONA PRETA</b>). Nossa eterna MÃE, obrigado por tudo! 💐</p>
+
+  <div class="controls">
+    <button onclick="toggleMusic()">🔊 Tocar Música</button>
+    <button onclick="toggleDarkMode()">🌙 Modo Noturno</button>
+  </div>
 
   <div class="gallery">
     <!-- Substitua os caminhos abaixo pelas fotos desejadas -->
@@ -142,37 +220,78 @@
 
   <!-- Lightbox -->
   <div class="lightbox" id="lightbox">
+    <span id="close-lightbox">&times;</span>
     <img src="" alt="Imagem em destaque" id="lightbox-img">
   </div>
 
-  <!-- Música de fundo -->
-  <audio autoplay loop>
-    <source src="musica/feliz-dia-maes.mp3" type="audio/mp3">
-    Seu navegador não suporta áudio.
-  </audio>
+  <!-- Botão voltar ao topo -->
+  <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
 
-  <!-- Scripts -->
-  <script>
-    // Efeito de fade-in nas imagens
-    document.querySelectorAll('.gallery img').forEach(img => {
-      img.addEventListener('load', () => {
-        img.classList.add('loaded');
-      });
+<!-- Música de fundo -->
+<audio id="bg-music" loop>
+  <source src="musica/feliz-dia-maes.mp3" type="audio/mp3">
+  Seu navegador não suporta áudio.
+</audio>
 
-      // Lightbox ao clicar
-      img.addEventListener('click', () => {
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img');
+<!-- Scripts -->
+<script>
+  // Efeito de fade-in nas imagens
+  document.querySelectorAll('.gallery img').forEach(img => {
+    img.addEventListener('load', () => {
+      img.classList.add('loaded');
+    });
 
-        lightboxImg.src = img.src;
-        lightbox.style.display = 'flex';
+    // Lightbox ao clicar
+    img.addEventListener('click', () => {
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      lightboxImg.src = img.src;
+      lightbox.style.display = 'flex';
 
-        // Fecha automaticamente após 5 segundos
-        setTimeout(() => {
-          lightbox.style.display = 'none';
-          lightboxImg.src = '';
-        }, 5000);
-      });
+      // Fecha automaticamente após 5s
+      setTimeout(() => {
+        lightbox.style.display = 'none';
+        lightboxImg.src = '';
+      }, 5000);
+    });
+  });
+
+  // Fechar manualmente o lightbox
+  document.getElementById('close-lightbox').addEventListener('click', () => {
+    document.getElementById('lightbox').style.display = 'none';
+    document.getElementById('lightbox-img').src = '';
+  });
+
+    // Controle da música
+    const audio = document.getElementById('bg-music');
+    let isPlaying = false;
+
+    function toggleMusic() {
+      const btn = event.target;
+      if (isPlaying) {
+        audio.pause();
+        btn.textContent = '🔈 Tocar Música';
+      } else {
+        audio.play();
+        btn.textContent = '🔊 Pausar Música';
+      }
+      isPlaying = !isPlaying;
+    }
+
+    // Modo escuro
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+   // Voltar ao topo
+   function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Mostrar botão de voltar ao topo
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('backToTop');
+      btn.style.display = window.scrollY > 300 ? 'block' : 'none';
     });
   </script>
 </body>
