@@ -164,6 +164,16 @@
       from { opacity: 0; }
       to { opacity: 1; }
     }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .music-animate {
+      animation: pulse 1s infinite;
+    }
   </style>
 </head>
 <body>
@@ -171,11 +181,12 @@
     <h1 aria-label="Feliz Dia das Mães com amor da Família Carvalho">Feliz Dia das Mães! 💖</h1>
   </header>
 
-  <p class="message">Uma homenagem cheia de amor para Maria Luisa Carvalho (<b>DONA PRETA</b>). Nossa eterna MÃE, obrigado por tudo! 💐</p>
+  <p class="message">Uma homenagem cheia de amor para Maria Luiza Carvalho (<b>DONA PRETA</b>). Nossa eterna MÃE, obrigado por tudo! 💐</p>
 
   <div class="controls">
-    <button onclick="toggleMusic()">🔊 Tocar Música</button>
+    <button id="musicBtn" onclick="toggleMusic()">🔈 Tocar Música</button>
     <button onclick="toggleDarkMode()">🌙 Modo Noturno</button>
+    <button onclick="downloadZip()">⬇️ Baixar Fotos</button>
   </div>
 
   <div class="gallery">
@@ -234,11 +245,15 @@
   <!-- Botão voltar ao topo -->
   <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
 
-<!-- Música de fundo -->
-<audio id="bg-music" autoplay loop>
-  <source src="musica/feliz-dia-maes.mp3" type="audio/mp3">
-  Seu navegador não suporta áudio.
-</audio>
+  <!-- Música de fundo -->
+  <audio id="bg-music" loop>
+    <source src="musica/feliz-dia-maes.mp3" type="audio/mp3">
+    Seu navegador não suporta áudio.
+  </audio>
+
+<!-- Scripts JSZip + FileSaver -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
 <!-- Scripts -->
 <script>
@@ -271,19 +286,43 @@
 
     // Controle da música
     const audio = document.getElementById('bg-music');
+    const musicBtn = document.getElementById('musicBtn');
     let isPlaying = false;
 
-    function toggleMusic() {
-      const btn = event.target;
-      if (isPlaying) {
-        audio.pause();
-        btn.textContent = '🔈 Tocar Música';
-      } else {
-        audio.play();
-        btn.textContent = '🔊 Pausar Música';
-      }
-      isPlaying = !isPlaying;
+   // Forçar autoplay em navegadores que permitem, sem som
+   window.addEventListener('load', () => {
+    audio.muted = true;
+    audio.play().catch(() => {
+      // Silenciosamente falha se o navegador bloquear
+    });
+  });
+
+  // Ao primeiro clique na página, ativar som
+  let firstInteraction = false;
+  document.addEventListener('click', () => {
+    if (!firstInteraction) {
+      audio.muted = false;
+      audio.play().catch(() => {});
+      musicBtn.textContent = '🔊 Pausar Música';
+      musicBtn.classList.add('music-animate');
+      isPlaying = true;
+      firstInteraction = true;
     }
+  }, { once: true });
+
+  function toggleMusic() {
+    if (isPlaying) {
+      audio.pause();
+      musicBtn.textContent = '🔈 Tocar Música';
+      musicBtn.classList.remove('music-animate');
+    } else {
+      audio.muted = false;
+      audio.play().catch(() => {});
+      musicBtn.textContent = '🔊 Pausar Música';
+      musicBtn.classList.add('music-animate');
+    }
+    isPlaying = !isPlaying;
+  }
 
     // Modo escuro
     function toggleDarkMode() {
@@ -300,6 +339,25 @@
       const btn = document.getElementById('backToTop');
       btn.style.display = window.scrollY > 300 ? 'block' : 'none';
     });
+
+        // Baixar fotos como ZIP
+        async function downloadZip() {
+      const zip = new JSZip();
+      const folder = zip.folder("fotos");
+      const imageElements = document.querySelectorAll('.gallery img');
+      const imageUrls = Array.from(imageElements).map(img => img.src);
+
+      for (let i = 0; i < imageUrls.length; i++) {
+        const url = imageUrls[i];
+        const response = await fetch(url);
+        const blob = await response.blob();
+        folder.file(`foto${i + 1}.jpg`, blob);
+      }
+
+      zip.generateAsync({ type: "blob" }).then(content => {
+        saveAs(content, "fotos-dia-das-maes.zip");
+      });
+    }
   </script>
 </body>
 </html>
