@@ -233,6 +233,11 @@
   </div>
 
   <footer>
+    <div id="datetime-container"> 
+      <span id="date"></span>  
+      <span id="clock"></span>
+    </div>
+    <div>
     &copy; 2025 - Paulo Carvalho - Todos os Direitos Reservados. ❤️ Com amor <b>FAMÍLIA CARVALHO</b>.
   </footer>
 
@@ -358,6 +363,31 @@
         saveAs(content, "fotos-dia-das-maes.zip");
       });
     }
+    // Relógio
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+    }
+
+    function updateDate() {
+      const now = new Date();
+      const dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+      const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+      const dia = dias[now.getDay()];
+      const data = now.getDate();
+      const mes = meses[now.getMonth()];
+      const ano = now.getFullYear();
+      document.getElementById('date').textContent = `${dia}, ${data} de ${mes} de ${ano}`;
+    }
+
+    updateDate();
+    updateClock();
+    setInterval(updateClock, 1000);
+    fetchLocation();
+
   </script>
 </body>
 </html>
